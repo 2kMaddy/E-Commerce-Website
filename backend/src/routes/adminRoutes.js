@@ -1,0 +1,26 @@
+import { Router } from "express";
+import { getAllUsers } from "../controllers/adminController.js";
+import {
+  getUserProfile,
+  deleteProfile,
+  registerUser,
+  loginUser,
+} from "../controllers/userController.js";
+import {
+  getAllOrders,
+  updateOrderStatus,
+} from "../controllers/orderController.js";
+import { verifyToken } from "../utils/tokenManager.js";
+import { validateSignup, validateLogin } from "../utils/validators.js";
+
+const adminRoutes = Router();
+
+adminRoutes.get("/get-all-users", verifyToken, getAllUsers);
+adminRoutes.get("/get-user/:userId", verifyToken, getUserProfile);
+adminRoutes.delete("/delete-user/:userId", verifyToken, deleteProfile);
+adminRoutes.get("/get-all-orders", verifyToken, getAllOrders);
+adminRoutes.post("/update-order-status", verifyToken, updateOrderStatus);
+adminRoutes.post("/admin-registration", validateSignup, registerUser);
+adminRoutes.post("/admin-login", validateLogin, loginUser);
+
+export default adminRoutes;
