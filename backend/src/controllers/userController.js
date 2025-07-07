@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Order from "../models/Order.js";
 import { hash, compare } from "bcrypt";
 import { generateToken } from "../utils/tokenManager.js";
 
@@ -84,16 +85,18 @@ export const getUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId).select("-password");
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     } else {
+      const response = { user, orders };
       res.status(200).json({
         success: true,
         message: "User profile fetched successfully",
-        data: user,
+        data: response,
       });
     }
   } catch (error) {
@@ -107,26 +110,37 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { name, email } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { name, email },
-      { new: true }
-    ).select("-password");
-
-    if (!updatedUser) {
+    const { userId } = req.params;
+    const { name, email, phone, addressId, updatedAddress } = req.body;
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "User profile updated successfully",
-        data: updatedUser,
-      });
     }
+    if (!addressId) {
+      user.addresses.push(updatedAddress);
+    } else {
+      const existingAddress = user.addresses.id(addressId);
+      if (!existingAddress) {
+        return res.status(404).json({
+          success: false,
+          message: "Address not found",
+        });
+      } else {
+        existingAddress.set(updatedAddress);
+      }
+    }
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    const updatedUser = await user.save();
+    res.status(200).json({
+      success: true,
+      message: "User profile updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

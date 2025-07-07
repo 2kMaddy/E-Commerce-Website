@@ -7,7 +7,7 @@ export const createOrder = async (req, res) => {
       productId,
       shippingAddress,
       paymentMethod,
-      qunatity,
+      quantity,
       totalPrice,
     } = req.body;
     const order = new Order({
@@ -15,7 +15,7 @@ export const createOrder = async (req, res) => {
       orderItem: productId,
       shippingAddress,
       paymentMethod,
-      qunatity,
+      quantity,
       totalPrice,
       orderStatus: "Pending",
     });
@@ -135,6 +135,37 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to update order status",
+      error: error.message,
+    });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const { userId, orderId } = req.body;
+    const order = await Order.find({ _id: orderId, userId: userId });
+    const { orderStatus } = order[0];
+    if (["Pending", "Confirmed", "Packed"].includes(orderStatus)) {
+      const cancelledOrder = await Order.findByIdAndUpdate(
+        orderId,
+        { orderStatus: "Cancelled" },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Order cancelled successfully",
+        data: cancelledOrder,
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Order cannot be cancelled at this stage",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel order",
       error: error.message,
     });
   }

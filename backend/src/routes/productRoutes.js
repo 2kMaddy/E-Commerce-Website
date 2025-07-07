@@ -4,30 +4,26 @@ import {
   addReview,
   updateReview,
   deleteReview,
-  getProductByCategory,
+  getProductsByFilters,
+  addUpdateCart,
+  deleteCartItem,
 } from "../controllers/productController.js";
-import { verifyToken } from "../utils/tokenManager.js";
 
 const productRoutes = Router();
 
-
-
-productRoutes.get("/get-product/:productId", verifyToken, getAllProducts);
-productRoutes.post("/add-review/:productId", verifyToken, addReview);
+productRoutes.get("/get-product/", getAllProducts);
+productRoutes.get("/get-product-by-id/:productId", getAllProducts);
+productRoutes.post("/add-review/:productId", addReview);
 productRoutes.post(
   "/update-review/:productId/:reviewId",
-  verifyToken,
   updateReview
 );
 productRoutes.delete(
   "/delete-review/:productId/:reviewId",
-  verifyToken,
   deleteReview
 );
-productRoutes.get(
-  "/get-product-by-category/:category",
-  verifyToken,
-  getProductByCategory
-);
+productRoutes.get("/get-product-by-category", getProductsByFilters);
+productRoutes.post("/add-update-cart", addUpdateCart);
+productRoutes.delete("/delete-cart-item", deleteCartItem);
 
 export default productRoutes;

@@ -1,22 +1,38 @@
 import mongoose, { Schema } from "mongoose";
 
-const reviewSchema = new Schema(
-  {
-    userId: {
-      type: String,
-      required: true,
-    },
-    comment: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-    },
+const reviewSchema = new Schema({
+  userId: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  userName: {
+    type: String,
+    required: true,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const ImageSchema = mongoose.Schema({
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+  imageText: {
+    type: String,
+    required: true,
+  },
+});
 
 const ProductSchema = mongoose.Schema({
   productName: {
@@ -39,10 +55,7 @@ const ProductSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
+  image: [ImageSchema],
   stock: {
     type: Number,
     required: true,

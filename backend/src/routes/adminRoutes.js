@@ -5,6 +5,7 @@ import {
   deleteProfile,
   registerUser,
   loginUser,
+  updateUserProfile,
 } from "../controllers/userController.js";
 import {
   getAllOrders,
@@ -34,5 +35,9 @@ adminRoutes.delete(
   verifyToken,
   deleteProductById
 );
-
+adminRoutes.post(
+  "/update-user-profile/:userId",
+  verifyToken,
+  updateUserProfile
+);
 export default adminRoutes;

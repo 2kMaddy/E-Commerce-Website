@@ -9,7 +9,7 @@ const OrderSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  qunatity: {
+  quantity: {
     type: Number,
     required: true,
   },
@@ -27,7 +27,23 @@ const OrderSchema = mongoose.Schema({
   },
   orderStatus: {
     type: String,
+    enum: [
+      "Pending",
+      "Confirmed",
+      "Packed",
+      "Shipped",
+      "Out for Delivery",
+      "Delivered",
+      "Cancelled",
+      "Refunded",
+      "Returned",
+      "Failed",
+    ],
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

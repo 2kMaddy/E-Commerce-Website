@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
+import User from "../models/User.js";
 
 export const createProduct = async (req, res) => {
   try {
@@ -154,7 +156,7 @@ export const deleteProductById = async (req, res) => {
 export const addReview = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { userId, comment, rating } = req.body;
+    const { userId, userName, comment, rating } = req.body;
 
     const product = await Product.findById(productId);
     if (!product) {
@@ -166,22 +168,31 @@ export const addReview = async (req, res) => {
 
     const newReview = {
       userId,
+      userName,
       comment,
       rating,
     };
 
-    product.reviews.push(newReview);
-    product.ratings =
-      product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-      product.reviews.length;
+    if (product.reviews.some((review) => review.userId === userId)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You have already reviewed this product, If you want to update your review, please use the update review endpoint.",
+      });
+    } else {
+      product.reviews.push(newReview);
+      product.ratings =
+        product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        product.reviews.length;
 
-    await product.save();
+      await product.save();
 
-    res.status(201).json({
-      success: true,
-      message: "Review added successfully",
-      data: product,
-    });
+      res.status(201).json({
+        success: true,
+        message: "Review added successfully",
+        data: product,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -195,17 +206,20 @@ export const updateReview = async (req, res) => {
   try {
     const { productId, reviewId } = req.params;
     const { userId, comment, rating } = req.body;
-    const product = await Product.find({ _id: productId });
+    const product = await Product.findById({ _id: productId });
     if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
     } else {
-      const updateReview = product.reviews.find({
-        _id: reviewId,
-        userId: userId,
-      });
+      const { reviews } = product;
+      console.log("Reviews:", reviews);
+      const updateReview = reviews.find(
+        (review) =>
+          review.userId.toString() === userId &&
+          review._id.toString() === reviewId
+      );
       if (!updateReview) {
         return res.status(404).json({
           success: false,
@@ -281,28 +295,97 @@ export const deleteReview = async (req, res) => {
   }
 };
 
-export const getProductByCategory = async (req, res) => {
+export const getProductsByFilters = async (req, res) => {
   try {
-    const { category } = req.params;
-    const products = await Product.find({ category: category }).sort({
-      createdAt: -1,
-    });
+    const { category, subCategory } = req.query;
+
+    // Build the dynamic filter
+    const filter = {};
+    if (category) filter.category = category;
+    if (subCategory) filter.subCategory = subCategory;
+
+    const products = await Product.find(filter).sort({ createdAt: -1 });
+
     if (!products || products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No products found in this category",
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "Products fetched successfully",
-        data: products,
+        message: "No products found for the given filters",
       });
     }
+
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      data: products,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to fetch products by category",
+      message: "Failed to fetch products",
+      error: error.message,
+    });
+  }
+};
+
+export const addUpdateCart = async (req, res) => {
+  try {
+    const { userId, productId, quantity } = req.body;
+    const user = await User.findById(userId);
+    const product = await Product.findById(productId);
+    if (!user || !product) {
+      return res.status(404).json({
+        success: false,
+        message: "User or Product not found",
+      });
+    }
+    const existingItem = user.cart.find((item) => item.productId === productId);
+    if (!existingItem) {
+      const newObject = {
+        productId: productId,
+        quantity: quantity,
+        totalPrice: product.price * quantity,
+      };
+      user.cart.push(newObject);
+    } else {
+      existingItem.quantity += Number(quantity);
+      existingItem.totalPrice = product.price * existingItem.quantity;
+    }
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Cart item added/updated successfully",
+      data: user.cart,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add/update cart",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteCartItem = async (req, res) => {
+  try {
+    const { userId, cartId } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    user.cart = user.cart.filter((item) => item._id.toString() !== cartId);
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Cart item deleted successfully",
+      data: user.cart,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete cart item",
       error: error.message,
     });
   }
