@@ -28,10 +28,6 @@ const ImageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  imageText: {
-    type: String,
-    required: true,
-  },
 });
 
 const ProductSchema = mongoose.Schema({
@@ -50,10 +46,18 @@ const ProductSchema = mongoose.Schema({
   category: {
     type: String,
     required: true,
+    enum: [
+      "Plain Teez",
+      "Polo Teez",
+      "Over Size",
+      "Acid Wash",
+      "Printed Teez",
+      "Custom Teez",
+    ],
   },
   subCategory: {
     type: String,
-    required: true,
+    enum: ["", "Acid", "Polo", "Over Size", "Polo"],
   },
   image: [ImageSchema],
   stock: {
@@ -65,6 +69,10 @@ const ProductSchema = mongoose.Schema({
     default: 0,
   },
   reviews: [reviewSchema],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export default mongoose.model("Product", ProductSchema);

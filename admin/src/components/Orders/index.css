@@ -1,0 +1,11 @@
+.order-id {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.order-table-container {
+    display: flex;
+}
+.order-table {
+    padding: 20px;
+    width: 100%;
+}

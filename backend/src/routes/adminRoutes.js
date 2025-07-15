@@ -15,6 +15,7 @@ import {
   createProduct,
   updateProduct,
   deleteProductById,
+  addBulkProducts,
 } from "../controllers/productController.js";
 import { verifyToken } from "../utils/tokenManager.js";
 import { validateSignup, validateLogin } from "../utils/validators.js";
@@ -29,6 +30,7 @@ adminRoutes.post("/update-order-status", verifyToken, updateOrderStatus);
 adminRoutes.post("/admin-registration", validateSignup, registerUser);
 adminRoutes.post("/admin-login", validateLogin, loginUser);
 adminRoutes.post("/add-product", verifyToken, createProduct);
+adminRoutes.post("/add-bulk-products", verifyToken, addBulkProducts);
 adminRoutes.post("/update-product/:productId", verifyToken, updateProduct);
 adminRoutes.delete(
   "/delete-product/:productId",

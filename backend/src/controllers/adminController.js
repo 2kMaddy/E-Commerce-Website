@@ -44,9 +44,9 @@ export const getUserById = async (req, res, next) => {
   }
 };
 
-
 export const adminLogin = async (req, res) => {
   try {
+    console.log(req.body)
     const { email, password } = req.body;
     const admin = await User.findOne({ email: email, role: "admin" });
     if (!admin) {

@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
@@ -58,12 +59,6 @@ export const getAllProducts = async (req, res) => {
       }
     } else {
       products = await Product.find().sort({ createdAt: -1 });
-      if (products.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No products found",
-        });
-      }
     }
     res.status(200).json({
       success: true,
@@ -386,6 +381,50 @@ export const deleteCartItem = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete cart item",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteMultiProducts = async (req, res) => {
+  try {
+    const { idList } = req.body;
+    const deleteProducts = await Promise.all(
+      idList.map((productId) => Product.findByIdAndDelete(productId))
+    );
+    res.status(200).json({
+      success: true,
+      message: "Products deleted successfully",
+      data: deleteProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete products",
+      error: error.message,
+    });
+  }
+};
+
+export const addBulkProducts = async (req, res) => {
+  try {
+    const { products } = req.body; // products should be an array of product objects
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No products provided for bulk add",
+      });
+    }
+    const createdProducts = await Product.insertMany(products);
+    res.status(201).json({
+      success: true,
+      message: "Bulk products added successfully",
+      data: createdProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add bulk products",
       error: error.message,
     });
   }

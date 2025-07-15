@@ -1,0 +1,60 @@
+.update-product-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); /* dimming effect */
+  backdrop-filter: blur(4px); /* optional blur */
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.update-product-form {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.update-product-label {
+  margin: 10px 0 5px 0;
+  font-size: 14px;
+}
+.update-product-input {
+  width: 100%;
+  padding: 6px;
+  border-radius: 8px;
+  outline: none;
+  border: solid 1px gray;
+}
+.update-product-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+.update-product-btn-container button {
+  width: 100px;
+  padding: 6px;
+  font-family: "Open Sans";
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.update-product-btn {
+    background-color: #5b4dbf;
+    color: white;
+}
+.fade-in {
+  animation: fadeIn 0.1s ease-out forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

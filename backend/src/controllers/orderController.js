@@ -1,4 +1,6 @@
+import User from "../models/User.js";
 import Order from "../models/Order.js";
+import Product from "../models/Product.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -10,6 +12,7 @@ export const createOrder = async (req, res) => {
       quantity,
       totalPrice,
     } = req.body;
+    const userDetails = await User.findById(userId);
     const order = new Order({
       userId,
       orderItem: productId,
@@ -62,22 +65,25 @@ export const getOrderByUserId = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { orderId, userId } = req.params;
-    const userOrders = await Order.findOne({
-      _id: orderId,
-      userId: userId,
-    });
-    if (!userOrders) {
+    const order = await Order.findOne({ _id: orderId, userId: userId });
+    if (!order) {
       return res.status(404).json({
         success: false,
         message: "Order not found for this user",
       });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "Order fetched successfully",
-        data: userOrders,
-      });
     }
+    const user = await User.findById(userId);
+    const product = await Product.findById(order.orderItem);
+    const response = {
+      ...order.toObject(),
+      productDetails: product || null,
+      userDetails: user || null,
+    };
+    res.status(200).json({
+      success: true,
+      message: "Order fetched successfully",
+      data: response,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -95,13 +101,19 @@ export const getAllOrders = async (req, res) => {
         success: false,
         message: "No orders found",
       });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "All orders fetched successfully",
-        data: orders,
-      });
     }
+    // Await all user lookups and convert Mongoose docs to plain objects
+    const updatedOrders = await Promise.all(
+      orders.map(async (each) => {
+        const user = await User.findById(each.userId).lean();
+        return { ...each.toObject(), userDetails: user };
+      })
+    );
+    res.status(200).json({
+      success: true,
+      message: "All orders fetched successfully",
+      data: updatedOrders,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
