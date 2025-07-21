@@ -61,35 +61,40 @@ const AddressSchema = new mongoose.Schema({
   },
 });
 
-const UserSchema = mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const UserSchema = mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    password: {
+      type: String,
+    },
+    googleId: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    addresses: [AddressSchema],
+    cart: [CartSchema],
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ["admin", "user"],
-    default: "user",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  addresses: [AddressSchema],
-  cart: [CartSchema],
-});
+  { timestamps: true }
+);
 
 export default mongoose.model("User", UserSchema);

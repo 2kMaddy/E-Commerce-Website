@@ -18,7 +18,7 @@ const Login = () => {
     adminLoginSubmit(email, password)
       .then((response) => {
         if (response.success) {
-          navigate("/dashboard");
+          navigate("/product");
         }
       })
       .finally(() => setIsLoading(false));

@@ -1,0 +1,136 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", "Open Sans", sans-serif;
+}
+.page-container {
+  background-size: cover;
+  height: 100vh;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.justify-center {
+  justify-content: center;
+}
+.align-center {
+  align-items: center;
+}
+.space-between {
+  justify-content: space-between;
+}
+.width-100 {
+  width: 100%;
+}
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.login-logo-container {
+  width: 120px;
+}
+.login-logo {
+  width: 100%;
+  height: auto;
+  margin-bottom: 12px;
+}
+.login-card h2 {
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+.login-input-container {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.login-input-container label {
+  font-size: 14px;
+  color: rgb(77, 77, 77);
+  margin-bottom: 4px;
+}
+.input-container {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+.input-logo {
+  left: 10px;
+  font-size: 20px;
+}
+.input-container input {
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  margin-left: 8px;
+}
+.input-container input::placeholder {
+  color: rgb(150, 150, 150);
+  margin-left: 30px;
+}
+.eye-btn {
+  background: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+.background-btn {
+  cursor: pointer;
+  background-color: rgb(26, 26, 26);
+  border: none;
+  outline: none;
+  color: white;
+  padding: 8px;
+}
+.login-btn {
+  width: 100%;
+  margin-top: 18px;
+}
+.error-message {
+  color: red;
+  font-size: 14px;
+  width: 100%;
+}
+.hr-with-text {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.hr-with-text::before,
+.hr-with-text::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid black;
+}
+
+.hr-with-text::before {
+  margin-right: 10px;
+}
+
+.hr-with-text::after {
+  margin-left: 10px;
+}
+
+.login-footer {
+  margin-top: 12px;
+  font-size: 14px;
+  width: 100%;
+}

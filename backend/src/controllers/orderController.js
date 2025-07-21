@@ -12,7 +12,6 @@ export const createOrder = async (req, res) => {
       quantity,
       totalPrice,
     } = req.body;
-    const userDetails = await User.findById(userId);
     const order = new Order({
       userId,
       orderItem: productId,
