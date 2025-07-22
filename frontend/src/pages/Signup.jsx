@@ -1,5 +1,8 @@
+import AuthForm from "../components/AuthForm/AuthForm";
+
 const Signup = () => {
-  return <div>Signup</div>;
+  return <AuthForm activeRoute="Signup" />;
 };
 
 export default Signup;
+

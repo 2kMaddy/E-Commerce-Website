@@ -14,3 +14,9 @@ export const updateUserProfile = (userId, updatedValues) =>
   api.put(`/user/update-user-profile/${userId}`, updatedValues);
 
 export const deleteUser = (userId) => api.delete(`/user/delete-user/${userId}`);
+
+export const forgotPassword = (email) =>
+  api.post("/user/forgot-password", email);
+
+export const resetPassword = (resetData) =>
+  api.post("/user/reset-password", resetData);

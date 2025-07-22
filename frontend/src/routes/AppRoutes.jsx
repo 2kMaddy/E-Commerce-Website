@@ -7,6 +7,8 @@ import Order from "../pages/Order";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import NotFound from "../pages/NotFound";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserLayout from "../layout/UserLayout";
 import "../styles/main.css";
@@ -39,6 +41,8 @@ const AppRoutes = createBrowserRouter([
   },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "*", element: <NotFound /> },
 ]);
 

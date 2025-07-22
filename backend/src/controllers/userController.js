@@ -1,5 +1,7 @@
 import User from "../models/User.js";
 import Order from "../models/Order.js";
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail";
 import { hash, compare } from "bcrypt";
 import { generateToken } from "../utils/tokenManager.js";
 
@@ -172,4 +174,55 @@ export const deleteProfile = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+      success: false,
+    });
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  user.resetToken = token;
+  user.resetTokenExpire = Date.now() + 3600000; // 1 hour
+  await user.save();
+
+  const resetUrl = `http://localhost:3000/reset-password/${token}`;
+  await sendEmail(
+    email,
+    "Password Reset",
+    `Click here to reset your password: ${resetUrl}`
+  );
+
+  res.json({
+    message: "Reset link sent to your email",
+    success: true,
+  });
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
+  }
+
+  user.password = await hash(password, 10);
+  user.resetToken = undefined;
+  user.resetTokenExpire = undefined;
+  await user.save();
+
+  res.json({ message: "Password reset successfully", success: true });
 };

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { userLogin, googleUserLogin } from "../../services/userService";
+import { userLogin, googleUserLogin, userRegistration } from "../../services/userService";
 import Cookies from "js-cookie";
 
 export const loginUser = createAsyncThunk(
@@ -8,7 +8,6 @@ export const loginUser = createAsyncThunk(
     try {
       const userObject = { email, password };
       const response = await userLogin(userObject);
-      console.log(response);
       Cookies.set("authToken", response.authToken, { expires: 7 });
       // Assuming the backend response is { authToken, data: { user } }
       return response.data.user;
@@ -17,6 +16,20 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
+export const signUpUser = createAsyncThunk(
+  "auth/signupUser",
+  async({name, email, password}, {rejectWithValue}) => {
+    try {
+      const userObject = {name, email, password};
+      const response = await userRegistration(userObject);
+      Cookies.set("authToken", response.authToken, {expires: 7});
+      return response.data.user;
+    } catch(err) {
+      return rejectWithValue(err.response?.data?.message || "Signup Failed");
+    }
+  }
+)
 
 export const googleLoginUser = createAsyncThunk(
   "auth/googleLogin",
@@ -64,6 +77,22 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.error = action.payload;
+      })
+      .addCase(signUpUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signUpUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(signUpUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
