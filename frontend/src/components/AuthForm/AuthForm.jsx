@@ -133,8 +133,8 @@ const AuthForm = (props) => {
           <button type="submit" className="background-btn login-btn">
             {activeRoute === "Signup" ? "Signup" : "Login"}
           </button>
-          <div className="login-footer flex-row space-between">
-            <div className="flex-row align-center">
+          <div className="login-footer space-between">
+            <div className="flex-row align-center top-margin-12">
               {activeRoute === "Signup" ? (
                 <>
                   <p>Already have an account?</p>
@@ -150,7 +150,9 @@ const AuthForm = (props) => {
             {activeRoute === "Signup" ? (
               ""
             ) : (
-              <a href="/forgot-password">Forgot Password?</a>
+              <a href="/forgot-password" className="top-margin-12">
+                Forgot Password?
+              </a>
             )}
           </div>
         </form>

@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import Order from "../models/Order.js";
 import crypto from "crypto";
-import sendEmail from "../utils/sendEmail";
+import sendEmail from "../utils/sendEmail.js";
 import { hash, compare } from "bcrypt";
 import { generateToken } from "../utils/tokenManager.js";
 
@@ -191,7 +191,7 @@ export const forgotPassword = async (req, res) => {
   user.resetTokenExpire = Date.now() + 3600000; // 1 hour
   await user.save();
 
-  const resetUrl = `http://localhost:3000/reset-password/${token}`;
+  const resetUrl = `http://localhost:5173/reset-password/${token}`;
   await sendEmail(
     email,
     "Password Reset",
