@@ -87,21 +87,20 @@ export const getUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId).select("-password");
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     } else {
-      const response = { user, orders };
       res.status(200).json({
         success: true,
         message: "User profile fetched successfully",
-        data: response,
+        data: user,
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch user profile",

@@ -1,14 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "../pages/Home";
-import Product from "../pages/Product";
+import ProductList from "../pages/ProductList";
 import ProductDetail from "../pages/ProductDetail";
-import Cart from "../pages/Cart";
-import Order from "../pages/Order";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
-import NotFound from "../pages/NotFound";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import Order from "../pages/Order";
+import Cart from "../pages/Cart";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserLayout from "../layout/UserLayout";
 import "../styles/main.css";
@@ -19,21 +18,21 @@ const AppRoutes = createBrowserRouter([
     element: <UserLayout />,
     children: [
       { path: "", element: <Home /> },
-      { path: "product", element: <Product /> },
-      { path: "product/:id", element: <ProductDetail /> },
-      {
-        path: "cart",
-        element: (
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        ),
-      },
+      { path: "product", element: <ProductList /> },
+      { path: "product/:productId", element: <ProductDetail /> },
       {
         path: "order",
         element: (
           <ProtectedRoute>
             <Order />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "cart",
+        element: (
+          <ProtectedRoute>
+            <Cart />
           </ProtectedRoute>
         ),
       },
@@ -43,7 +42,6 @@ const AppRoutes = createBrowserRouter([
   { path: "/signup", element: <Signup /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
-  { path: "*", element: <NotFound /> },
 ]);
 
 export default AppRoutes;

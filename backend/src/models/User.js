@@ -1,66 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-const CartSchema = new Schema({
-  productId: {
-    type: String,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-const AddressSchema = new mongoose.Schema({
-  doorNo: {
-    type: String,
-    required: true,
-  },
-  street: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  city: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  state: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  pinCode: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  country: {
-    type: String,
-    trim: true,
-    default: "India",
-  },
-  type: {
-    type: String,
-    enum: ["home", "work", "other"],
-    default: "home",
-  },
-  isDefault: {
-    type: Boolean,
-    default: false,
-  },
-});
-
 const UserSchema = mongoose.Schema(
   {
     email: {
@@ -93,8 +32,6 @@ const UserSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    addresses: [AddressSchema],
-    cart: [CartSchema],
   },
   { timestamps: true }
 );

@@ -33,7 +33,6 @@ const AuthForm = (props) => {
     }
 
     if (result?.meta?.requestStatus === "fulfilled") {
-      localStorage.setItem("userDetail", JSON.stringify(result?.data?.user));
       navigate("/");
     } else {
       setError(result.payload || "Login failed. Please try again.");
@@ -67,7 +66,7 @@ const AuthForm = (props) => {
         >
           <div className="login-logo-container">
             <img
-              src="src\assets\FYNL Logo.png"
+              src="src\assets\Logo Black.png"
               alt="logo"
               className="login-logo"
             />

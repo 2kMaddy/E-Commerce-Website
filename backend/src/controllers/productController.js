@@ -1,7 +1,5 @@
-
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
-import User from "../models/User.js";
 
 export const createProduct = async (req, res) => {
   try {
@@ -47,28 +45,69 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const { productId } = req.params;
-    let products;
-    if (productId) {
-      products = await Product.findById(productId);
-      if (!products) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
-    } else {
-      products = await Product.find().sort({ createdAt: -1 });
+    const { page, limit } = req.query;
+
+    // If pagination is not requested, return all products
+    if (!page && !limit) {
+      const products = await Product.find().sort({ createdAt: -1 });
+      return res.status(200).json({
+        success: true,
+        message: "All products fetched successfully",
+        data: products,
+      });
     }
-    res.status(200).json({
+
+    // Parse pagination parameters
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 10;
+
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Fetch paginated results
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
+
+    const total = await Product.countDocuments();
+
+    return res.status(200).json({
       success: true,
-      message: "Product(s) fetched successfully",
+      message: "Products fetched with pagination",
       data: products,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to fetch product(s)",
+      message: "Failed to fetch products",
+      error: error.message,
+    });
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product fetched successfully",
+      data: product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch product",
       error: error.message,
     });
   }
@@ -167,28 +206,32 @@ export const addReview = async (req, res) => {
       comment,
       rating,
     };
+    console.log(newReview);
 
-    if (product.reviews.some((review) => review.userId === userId)) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "You have already reviewed this product, If you want to update your review, please use the update review endpoint.",
-      });
-    } else {
-      product.reviews.push(newReview);
-      product.ratings =
-        product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-        product.reviews.length;
+    // if (product.reviews.some((review) => review.userId === userId)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message:
+    //       "You have already reviewed this product, If you want to update your review, please use the update review endpoint.",
+    //   });
+    // } else {
+    // }
+    product.reviews.push(newReview);
+    product.ratings = Math.round(
+      product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        product.reviews.length
+    );
 
-      await product.save();
 
-      res.status(201).json({
-        success: true,
-        message: "Review added successfully",
-        data: product,
-      });
-    }
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Review added successfully",
+      data: product,
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Failed to add review",
@@ -290,102 +333,6 @@ export const deleteReview = async (req, res) => {
   }
 };
 
-export const getProductsByFilters = async (req, res) => {
-  try {
-    const { category, subCategory } = req.query;
-
-    // Build the dynamic filter
-    const filter = {};
-    if (category) filter.category = category;
-    if (subCategory) filter.subCategory = subCategory;
-
-    const products = await Product.find(filter).sort({ createdAt: -1 });
-
-    if (!products || products.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No products found for the given filters",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Products fetched successfully",
-      data: products,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch products",
-      error: error.message,
-    });
-  }
-};
-
-export const addUpdateCart = async (req, res) => {
-  try {
-    const { userId, productId, quantity } = req.body;
-    const user = await User.findById(userId);
-    const product = await Product.findById(productId);
-    if (!user || !product) {
-      return res.status(404).json({
-        success: false,
-        message: "User or Product not found",
-      });
-    }
-    const existingItem = user.cart.find((item) => item.productId === productId);
-    if (!existingItem) {
-      const newObject = {
-        productId: productId,
-        quantity: quantity,
-        totalPrice: product.price * quantity,
-      };
-      user.cart.push(newObject);
-    } else {
-      existingItem.quantity += Number(quantity);
-      existingItem.totalPrice = product.price * existingItem.quantity;
-    }
-    await user.save();
-    res.status(200).json({
-      success: true,
-      message: "Cart item added/updated successfully",
-      data: user.cart,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to add/update cart",
-      error: error.message,
-    });
-  }
-};
-
-export const deleteCartItem = async (req, res) => {
-  try {
-    const { userId, cartId } = req.body;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    user.cart = user.cart.filter((item) => item._id.toString() !== cartId);
-    await user.save();
-    res.status(200).json({
-      success: true,
-      message: "Cart item deleted successfully",
-      data: user.cart,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete cart item",
-      error: error.message,
-    });
-  }
-};
-
 export const deleteMultiProducts = async (req, res) => {
   try {
     const { idList } = req.body;
@@ -425,6 +372,70 @@ export const addBulkProducts = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to add bulk products",
+      error: error.message,
+    });
+  }
+};
+
+export const getLatestProduct = async (req, res) => {
+  try {
+    const latestProducts = await Product.find()
+      .sort({ createdAt: -1 })
+      .limit(10);
+    if (!latestProducts || latestProducts.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No latest products found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Latest products fetched successfully",
+      data: latestProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch latest products",
+      error: error.message,
+    });
+  }
+};
+
+export const getProductsByFilters = async (req, res) => {
+  try {
+    const { category } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const filter = {};
+    if (category) filter.category = category;
+
+    let products;
+    products = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No products found for the given filters",
+      });
+    }
+    const total = await Product.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      data: products,
+      currentPage: page,
+      totalPage: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch products",
       error: error.message,
     });
   }

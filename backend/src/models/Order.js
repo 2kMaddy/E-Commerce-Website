@@ -1,11 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 
-const OrderSchema = mongoose.Schema({
-  userId: {
+const ItemsSchema = mongoose.Schema({
+  productId: {
     type: String,
     required: true,
   },
-  orderItem: {
+  productName: {
+    type: String,
+    reqiured: true,
+  },
+  thumbnailUrl: {
+    type: String,
+    required: true,
+  },
+  size: {
     type: String,
     required: true,
   },
@@ -13,38 +21,57 @@ const OrderSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  shippingAddress: {
-    type: String,
+  price: {
+    type: Number,
     required: true,
   },
-  paymentMethod: {
-    type: String,
+  itemTotal: {
+    type: Number,
     required: true,
-  },
-  totalPrice: {
-    type: String,
-    required: true,
-  },
-  orderStatus: {
-    type: String,
-    enum: [
-      "Pending",
-      "Confirmed",
-      "Packed",
-      "Shipped",
-      "Out for Delivery",
-      "Delivered",
-      "Cancelled",
-      "Refunded",
-      "Returned",
-      "Failed",
-    ],
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
 });
+
+const OrderSchema = mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      required: true,
+    },
+    orderItems: [ItemsSchema],
+    shippingAddress: {
+      type: String,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+    },
+    grandTotal: {
+      type: String,
+      required: true,
+    },
+    orderStatus: {
+      type: String,
+      enum: [
+        "Pending",
+        "Confirmed",
+        "Packed",
+        "Shipped",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+        "Refunded",
+        "Returned",
+        "Failed",
+      ],
+      default: "Pending",
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("Order", OrderSchema);

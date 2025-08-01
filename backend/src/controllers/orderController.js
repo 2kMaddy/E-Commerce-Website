@@ -4,23 +4,66 @@ import Product from "../models/Product.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const {
-      userId,
-      productId,
-      shippingAddress,
-      paymentMethod,
-      quantity,
-      totalPrice,
-    } = req.body;
+    const { userId, items, shippingAddress, paymentMethod } = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Order items are required",
+      });
+    }
+
+    const orderItems = [];
+    let totalPrice = 0;
+
+    for (const item in items) {
+      const {
+        productId,
+        productName,
+        thumbnailUrl,
+        size,
+        quantity,
+        totalPrice,
+      } = item;
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Product ${productName} not found`,
+        });
+      }
+
+      if (product.stock < quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for product ${product.name}`,
+        });
+      }
+
+      const itemTotal = product.price * quantity;
+      totalPrice += itemTotal;
+
+      orderItems.push({
+        productId,
+        productName,
+        thumbnailUrl,
+        size,
+        quantity,
+        price: product.price,
+        itemTotal,
+      });
+
+      product.stock -= quantity;
+      await product.save();
+    }
+
     const order = new Order({
       userId,
-      orderItem: productId,
+      orderItems,
       shippingAddress,
       paymentMethod,
-      quantity,
-      totalPrice,
-      orderStatus: "Pending",
+      grandTotal: totalPrice,
     });
+
     const savedOrder = await order.save();
     res.status(201).json({
       success: true,

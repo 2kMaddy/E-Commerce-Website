@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import mongoose, { Schema } from "mongoose";
 
 const reviewSchema = new Schema({
@@ -31,9 +32,15 @@ const ImageSchema = mongoose.Schema({
 });
 
 const ProductSchema = mongoose.Schema({
+  _id: {
+    type: String,
+    default: uuidv4,
+    required: true,
+  },
   productName: {
     type: String,
     required: true,
+    unique: true,
   },
   description: {
     type: String,
@@ -64,11 +71,20 @@ const ProductSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  size: {
+    type: [String],
+    enum: ["S", "M", "L", "XL", "XXL", "XXXL"],
+    default: [],
+  },
   ratings: {
     type: Number,
     default: 0,
   },
   reviews: [reviewSchema],
+  estimateDeliveryTime: {
+    type: Number,
+    default: 3,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

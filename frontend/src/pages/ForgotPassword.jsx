@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { MdAlternateEmail } from "react-icons/md";
 import { forgotPassword } from "../services/userService";
 
 const ForgotPassword = () => {
@@ -29,25 +30,45 @@ const ForgotPassword = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Forgot Password</h2>
-      <input
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        disabled={loading}
-      />
-      <button type="submit" disabled={loading}>
-        {loading ? "Sending..." : "Send Reset Link"}
-      </button>
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <p>
-        <Link to="/login">Back to Login</Link>
-      </p>
-    </form>
+    <div className="page-container padding-20 flex-column justify-center align-center">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-column justify-center align-center padding-20 login-card"
+      >
+        <h2>Forgot Password</h2>
+        <div className="login-input-container">
+          <label htmlFor="email">Email</label>
+          <div className="input-container">
+            <div className="input-logo">
+              <MdAlternateEmail />
+            </div>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="background-btn login-btn"
+        >
+          {loading ? "Sending..." : "Send Reset Link"}
+        </button>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">*{error}</p>}
+        <Link to="/login" className="width-100">
+          <button type="button" className="outline-btn login-btn">
+            Back to Login
+          </button>
+        </Link>
+      </form>
+    </div>
   );
 };
 
