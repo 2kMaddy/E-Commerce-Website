@@ -40,7 +40,6 @@ const OrderSchema = mongoose.Schema(
     orderItems: [ItemsSchema],
     shippingAddress: {
       type: String,
-      required: true,
     },
     paymentMethod: {
       type: String,

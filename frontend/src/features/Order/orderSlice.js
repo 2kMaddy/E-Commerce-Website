@@ -1,3 +1,4 @@
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createOrder } from "../../services/orderService";
 
@@ -9,6 +10,7 @@ export const fetchCreateOrder = createAsyncThunk(
       console.log("Create order status", response.data);
       return response.data;
     } catch (error) {
+      console.log(error);
       return rejectWithValue(
         error.response?.data?.message || "Create order has failed"
       );

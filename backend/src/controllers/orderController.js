@@ -1,16 +1,32 @@
+import crypto from "crypto";
+import Razorpay from "razorpay";
 import User from "../models/User.js";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const { userId, items, shippingAddress, paymentMethod } = req.body;
+    const { userId, items, shippingAddress, paymentMethod, grandTotal } =
+      req.body;
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
         success: false,
         message: "Order items are required",
       });
     }
+
+    const options = {
+      amount: grandTotal,
+      currency: "INR",
+      receipt: `receipt_order_${Math.floor(Math.random() * 10000)}`,
+    };
+
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZOR_PAY_KEY_ID, // from Razorpay Dashboard
+      key_secret: process.env.RAZOR_PAY_KEY_SECRET, // keep this safe, never expose in frontend
+    });
+
+    const order = await razorpay.orders.create(options);
 
     const orderItems = [];
     let totalPrice = 0;
@@ -56,7 +72,7 @@ export const createOrder = async (req, res) => {
       await product.save();
     }
 
-    const order = new Order({
+    const newOrder = new Order({
       userId,
       orderItems,
       shippingAddress,
@@ -64,18 +80,35 @@ export const createOrder = async (req, res) => {
       grandTotal: totalPrice,
     });
 
-    const savedOrder = await order.save();
+    const savedOrder = await newOrder.save();
     res.status(201).json({
       success: true,
       message: "Order created successfully",
       data: savedOrder,
+      order: order,
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       success: false,
       message: "Failed to create order",
       error: error.message,
     });
+  }
+};
+
+export const verifyPayment = (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
+
+  const hmac = crypto.createHmac("sha256", "YOUR_KEY_SECRET");
+  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+  const generated_signature = hmac.digest("hex");
+
+  if (generated_signature === razorpay_signature) {
+    res.json({ status: "success" });
+  } else {
+    res.status(400).json({ status: "failure" });
   }
 };
 

@@ -1,10 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setClearList } from "../features/Order/orderSlice";
+import api from "../services/api.js";
+import { setClearList, fetchCreateOrder } from "../features/Order/orderSlice";
 
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const orderList = useSelector((state) => state.order.selectedItems);
   const grandTotal = orderList.reduce((acc, item) => acc + item.itemTotal, 0);
 
@@ -12,6 +14,44 @@ const Order = () => {
     if (window.confirm("Are you sure, want to go back?")) {
       dispatch(setClearList());
       navigate(-1);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const orderObject = {
+        userId: user._id,
+        items: orderList,
+        paymentMethod: "Net banking",
+        grandTotal: grandTotal,
+      };
+      const result = dispatch(fetchCreateOrder(orderObject));
+      console.log(result);
+
+      const options = {
+        key: "rzp_live_uBJldbYPcyrYAM", // from Razorpay Dashboard
+        amount: result.amount,
+        currency: result.currency,
+        name: "Test Company",
+        description: "Test Transaction",
+        order_id: result.id,
+        handler: async (response) => {
+          // Step 3: Verify payment in backend
+          const verifyRes = await api.post("order/verify-payment", response);
+          alert(
+            verifyRes.data.status === "success"
+              ? "Payment Successful"
+              : "Payment Failed"
+          );
+          console.log(verifyRes);
+        },
+        theme: { color: "#3399cc" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -41,7 +81,9 @@ const Order = () => {
           </ul>
           <div>
             <h3>{`Grand total: ${grandTotal}`}</h3>
-            <button type="button">Place Order</button>
+            <button type="button" onClick={handleCreateOrder}>
+              Place Order
+            </button>
             <button type="button" onClick={handleDiscard}>
               Discard
             </button>
