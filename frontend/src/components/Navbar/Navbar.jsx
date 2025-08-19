@@ -23,14 +23,16 @@ const Navbar = () => {
               <NavLink to="/" className="lg-nav-options-item">
                 Home
               </NavLink>
-              <button
-                type="button"
-                onClick={() => setOpenCategories((prev) => !prev)}
-                className="lg-nav-options-item"
-              >
-                Category
-              </button>
-              <NavLink to="/order" className="lg-nav-options-item">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setOpenCategories((prev) => !prev)}
+                  className="lg-nav-options-item"
+                >
+                  Category
+                </button>
+              </div>
+              <NavLink to="/my-orders" className="lg-nav-options-item">
                 Orders
               </NavLink>
               <NavLink to="/contact" className="lg-nav-options-item">

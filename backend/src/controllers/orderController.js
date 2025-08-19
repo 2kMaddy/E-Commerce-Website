@@ -6,40 +6,51 @@ import Product from "../models/Product.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const { userId, items, shippingAddress, paymentMethod, grandTotal } =
-      req.body;
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Order items are required",
-      });
-    }
-
+    const { grandTotal } = req.body;
     const options = {
-      amount: grandTotal,
+      amount: Math.floor(grandTotal / 10), // amount in paise
       currency: "INR",
       receipt: `receipt_order_${Math.floor(Math.random() * 10000)}`,
     };
-
     const razorpay = new Razorpay({
-      key_id: process.env.RAZOR_PAY_KEY_ID, // from Razorpay Dashboard
-      key_secret: process.env.RAZOR_PAY_KEY_SECRET, // keep this safe, never expose in frontend
+      key_id: process.env.RAZOR_PAY_KEY_ID,
+      key_secret: process.env.RAZOR_PAY_KEY_SECRET,
     });
-
     const order = await razorpay.orders.create(options);
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to create Razorpay order",
+      error: error.message,
+    });
+  }
+};
 
+export const verifyPayment = async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    userId,
+    items,
+    shippingAddress,
+    paymentMethod,
+  } = req.body;
+
+  const hmac = crypto.createHmac("sha256", process.env.RAZOR_PAY_KEY_SECRET);
+  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+  const generated_signature = hmac.digest("hex");
+
+  if (generated_signature === razorpay_signature) {
+    // Validate items and update stock
     const orderItems = [];
     let totalPrice = 0;
-
-    for (const item in items) {
-      const {
-        productId,
-        productName,
-        thumbnailUrl,
-        size,
-        quantity,
-        totalPrice,
-      } = item;
+    for (const item of items) {
+      const { productId, productName, thumbnailUrl, size, quantity } = item;
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({
@@ -47,17 +58,14 @@ export const createOrder = async (req, res) => {
           message: `Product ${productName} not found`,
         });
       }
-
       if (product.stock < quantity) {
         return res.status(400).json({
           success: false,
           message: `Not enough stock for product ${product.name}`,
         });
       }
-
       const itemTotal = product.price * quantity;
       totalPrice += itemTotal;
-
       orderItems.push({
         productId,
         productName,
@@ -67,67 +75,53 @@ export const createOrder = async (req, res) => {
         price: product.price,
         itemTotal,
       });
-
       product.stock -= quantity;
       await product.save();
     }
-
+    // Save order in DB
     const newOrder = new Order({
       userId,
       orderItems,
       shippingAddress,
       paymentMethod,
       grandTotal: totalPrice,
+      paymentStatus: "Paid",
+      razorpay_order_id,
+      razorpay_payment_id,
     });
-
     const savedOrder = await newOrder.save();
     res.status(201).json({
       success: true,
-      message: "Order created successfully",
+      message: "Order created and payment verified successfully",
       data: savedOrder,
-      order: order,
     });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create order",
-      error: error.message,
-    });
-  }
-};
-
-export const verifyPayment = (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-    req.body;
-
-  const hmac = crypto.createHmac("sha256", "YOUR_KEY_SECRET");
-  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
-  const generated_signature = hmac.digest("hex");
-
-  if (generated_signature === razorpay_signature) {
-    res.json({ status: "success" });
   } else {
-    res.status(400).json({ status: "failure" });
+    res
+      .status(400)
+      .json({ status: "failure", message: "Payment verification failed" });
   }
 };
 
 export const getOrderByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-    if (orders.length === 0) {
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({
         success: false,
-        message: "No orders found for this user",
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "Orders fetched successfully",
-        data: orders,
+        message: "User not found",
       });
     }
+    const orders = await Order.find({
+      userId,
+      orderStatus: { $ne: "Cancelled" },
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Orders fetched successfully",
+      data: orders,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -229,7 +223,7 @@ export const updateOrderStatus = async (req, res) => {
 
 export const cancelOrder = async (req, res) => {
   try {
-    const { userId, orderId } = req.body;
+    const { userId, orderId } = req.query;
     const order = await Order.find({ _id: orderId, userId: userId });
     const { orderStatus } = order[0];
     if (["Pending", "Confirmed", "Packed"].includes(orderStatus)) {

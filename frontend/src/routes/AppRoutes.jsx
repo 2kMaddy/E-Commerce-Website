@@ -8,6 +8,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import Order from "../pages/Order";
 import Cart from "../pages/Cart";
+import MyOrders from "../pages/MyOrders";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserLayout from "../layout/UserLayout";
 import "../styles/main.css";
@@ -33,6 +34,14 @@ const AppRoutes = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Cart />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "my-orders",
+        element: (
+          <ProtectedRoute>
+            <MyOrders />
           </ProtectedRoute>
         ),
       },

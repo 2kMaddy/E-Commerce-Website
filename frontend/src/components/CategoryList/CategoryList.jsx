@@ -1,8 +1,10 @@
 import { NavLink } from "react-router-dom";
+
 import categoriesConstants from "../../utlis/constants";
 
 const CategoryList = (props) => {
   const { onClose } = props;
+
   return (
     <div className="nav-category-list">
       <ul className="category-list-container">
@@ -12,6 +14,7 @@ const CategoryList = (props) => {
             onClick={onClose}
             to={`/product?category=${each.value}`}
             className="text-decoration-none"
+            key={each.id}
           >
             <li className="category-list-item-container">
               {each.categoryName}

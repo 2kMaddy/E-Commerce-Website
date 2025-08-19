@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api.js";
+import { paymentVerification } from "../services/orderService.js";
 import { setClearList, fetchCreateOrder } from "../features/Order/orderSlice";
 
 const Order = () => {
@@ -19,31 +19,37 @@ const Order = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const orderObject = {
-        userId: user._id,
-        items: orderList,
-        paymentMethod: "Net banking",
-        grandTotal: grandTotal,
-      };
-      const result = dispatch(fetchCreateOrder(orderObject));
-      console.log(result);
+      // Step 1: Get Razorpay order from backend
+      const orderRes = await dispatch(fetchCreateOrder(grandTotal)).unwrap();
+      const razorpayOrder = orderRes.order;
 
       const options = {
         key: "rzp_live_uBJldbYPcyrYAM", // from Razorpay Dashboard
-        amount: result.amount,
-        currency: result.currency,
+        amount: grandTotal, // Amount in paise
+        currency: "INR",
         name: "Test Company",
         description: "Test Transaction",
-        order_id: result.id,
+        order_id: razorpayOrder.id, // Use the order ID from the result
         handler: async (response) => {
-          // Step 3: Verify payment in backend
-          const verifyRes = await api.post("order/verify-payment", response);
-          alert(
-            verifyRes.data.status === "success"
-              ? "Payment Successful"
-              : "Payment Failed"
-          );
+          // Step 2: Send payment verification and order details to backend
+          const verifyPayload = {
+            ...response,
+            userId: user._id,
+            items: orderList,
+            paymentMethod: "Net banking",
+            grandTotal,
+            shippingAddress: user.address, // update as needed
+          };
+          const verifyRes = await paymentVerification(verifyPayload);
           console.log(verifyRes);
+
+          // Show success or failure message
+          if (verifyRes.data.success) {
+            alert("Payment Successful");
+            navigate("/my-orders"); // Added navigation here
+          } else {
+            alert("Payment Failed");
+          }
         },
         theme: { color: "#3399cc" },
       };
