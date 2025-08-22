@@ -11,7 +11,7 @@ import {
   incQuantity,
   decQuantity,
   fetchAddToCart,
-} from "../features/Cart/CartSlice";
+} from "../features/Cart/cartSlice.js";
 import { setNewList } from "../features/Order/orderSlice";
 import priceFormat from "../utlis/priceFormat";
 import dateFormat from "../utlis/dateFormat";
