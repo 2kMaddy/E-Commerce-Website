@@ -3,29 +3,35 @@ import { FaStar } from "react-icons/fa";
 import priceFormat from "../../utlis/priceFormat";
 
 const ProductCart = (props) => {
-  const { productName, image, price, ratings, _id } = props.productDetail;
+  const { productName, image, price, ratings, _id, reviews } =
+    props.productDetail;
   const { imageUrl } = image[0] || {};
+  const ratingStars = Array(Math.round(ratings))
+    .fill(null)
+    .map((_, index) => <FaStar key={index} />);
 
   return (
-    <NavLink to={`/product/${_id}`} className="text-decoration-none width-100">
-      <div className="product-card-content width-100">
-        <div className="card-image-container width-100">
+    <NavLink to={`/product/${_id}`}>
+      <div className="w-[400px] flex flex-col gap-3 bg-white rounded-2xl shadow-md hover:text-[#993df5]">
+        <div className="w-[400px] overflow-hidden rounded-t-2xl">
           <img
             src={imageUrl}
             alt={productName}
-            className="product-card-image width-100"
+            className="w-[400px] hover:scale-105 transition-transform duration-300"
           />
         </div>
-        <div className="product-card-detail flex-column padding-20">
-          <h3 className="product-card-title">{productName}</h3>
-          <div className="flex-row align-center justify-between">
-            <p className="product-card-price">{priceFormat(price)}</p>
-            <p className="product-card-price">
-              <span>
-                <FaStar className="star-icon" />
+        <div className="p-5 flex flex-row justify-between">
+          <div className="gap-4 flex flex-col">
+            <h3 className="font-semibold">{productName}</h3>
+            <p className="flex flex-row items-center gap-1">
+              <span className="flex flex-row gap-1 text-yellow-400">
+                {ratingStars}
               </span>
-              {ratings}
+              ({reviews.length})
             </p>
+          </div>
+          <div>
+            <p className="font-semibold">{priceFormat(price)}</p>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 
-import ProductCart from "../ProductCard/ProductCard";
+import ProductCard from "../ProductCard/ProductCard";
 
 const ProductSlide = ({ products }) => {
   const scrollRef = useRef(null);
@@ -18,25 +18,34 @@ const ProductSlide = ({ products }) => {
   };
 
   return (
-    <div className="latest-product-list">
-      <button onClick={() => scroll("left")} className="arrow-btn">
+    <div className="relative">
+      <button
+        onClick={() => scroll("left")}
+        className="absolute left-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
+      >
         <FaCircleChevronLeft />
       </button>
 
-      <div ref={scrollRef} className="latest-product-slides overflow-x-auto">
+      <div>
         {products.length > 0 ? (
-          <div className="flex-row align-center width-100">
+          <ul
+            className="flex flex-row gap-3 overflow-x-auto hide-scrollbar"
+            ref={scrollRef}
+          >
             {products.map((product) => (
-              <div className="margin-12 latest-product-items" key={product._id}>
-                <ProductCart productDetail={product} />
-              </div>
+              <li key={product._id}>
+                <ProductCard productDetail={product} />
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <p>No latest products available.</p>
         )}
       </div>
-      <button onClick={() => scroll("right")} className="arrow-btn right">
+      <button
+        onClick={() => scroll("right")}
+        className="absolute right-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
+      >
         <FaCircleChevronRight />
       </button>
     </div>

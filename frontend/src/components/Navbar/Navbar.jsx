@@ -1,76 +1,121 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { VscMenu } from "react-icons/vsc";
 import { FiShoppingCart, FiUser } from "react-icons/fi";
+import { IoMdLogOut } from "react-icons/io";
+import Cookies from "js-cookie";
 import CategoryList from "../CategoryList/CategoryList";
+import { logout } from "../../features/Auth/authSlice";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthorised = useSelector((state) => state.auth.isAuthenticated);
   const [openCategories, setOpenCategories] = useState(false);
-
   const closePopup = () => {
     setOpenCategories(false);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    Cookies.remove("authToken");
+    localStorage.removeItem("userProfileDetails");
+    navigate("/");
+  };
+
   return (
     <>
-      <nav className="nav-bar width-100">
-        <div className="nav-bar-container flex-row justify-between align-center">
-          <div className="nav-left flex-row align-center">
-            <VscMenu className="nav-menu-icon" />
-            <div className="lg-nav-options flex-row justify-between align-center">
-              <NavLink to="/" className="lg-nav-options-item">
+      <nav className="w-full flex flex-row font-semibold">
+        <div className="flex flex-row justify-between items-center w-full p-4 bg-white shadow-md">
+          <div>
+            <NavLink to="/">
+              <img
+                src="src\assets\Logo Black.png"
+                alt="logo"
+                className="w-40"
+              />
+            </NavLink>
+          </div>
+          <div className="flex flex-row">
+            <VscMenu className="block lg:hidden" />
+            <div className="hidden lg:flex flex-row gap-8">
+              <NavLink
+                to="/"
+                className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
+              >
                 Home
               </NavLink>
               <div>
                 <button
                   type="button"
                   onClick={() => setOpenCategories((prev) => !prev)}
-                  className="lg-nav-options-item"
+                  className="cursor-pointer relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
                 >
                   Category
                 </button>
               </div>
-              <NavLink to="/my-orders" className="lg-nav-options-item">
+              <NavLink
+                to="/my-orders"
+                className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
+              >
                 Orders
               </NavLink>
-              <NavLink to="/contact" className="lg-nav-options-item">
+              <NavLink
+                to="/contact"
+                className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
+              >
                 Contact
               </NavLink>
             </div>
           </div>
-          <div className="nav-center">
-            <NavLink to="/">
-              <img
-                src="src\assets\Logo Black.png"
-                alt="logo"
-                className="nav-bar-logo"
-              />
-            </NavLink>
-          </div>
+
           {isAuthorised ? (
-            <div className="nav-right flex-row align-center">
+            <div className="flex flex-row gap-5">
               <NavLink to="/cart">
-                <button type="button" className="background-btn nav-bar-btn">
+                <button
+                  type="button"
+                  className="cursor-pointer text-[18px] p-2 hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
+                >
                   <FiShoppingCart />
+                  <span className="text-[16px]">Cart</span>
                 </button>
               </NavLink>
-              <NavLink to="/signup">
-                <button type="button" className="outline-btn nav-bar-btn">
-                  <FiUser />
+
+              <button
+                type="button"
+                className="cursor-pointer text-[18px] p-2  hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
+              >
+                <FiUser />
+                <span className="text-[16px]">Account</span>
+              </button>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="cursor-pointer text-[18px] p-2   hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
+                >
+                  <IoMdLogOut />
+                  <span className="text-[16px]">Logout</span>
                 </button>
-              </NavLink>
+              </div>
             </div>
           ) : (
-            <div className="nav-right flex-row align-center">
+            <div className="flex flex-row gap-4">
               <NavLink to="/login">
-                <button type="button" className="background-btn nav-bar-btn">
+                <button
+                  type="button"
+                  className="cursor-pointer w-24 border border-[#8f49ff] bg-[#8f49ff] text-white rounded-2xl p-2 pl-3 pr-3 hover:bg-[#5203a1] transition-colors duration-300"
+                >
                   Login
                 </button>
               </NavLink>
               <NavLink to="/signup">
-                <button type="button" className="outline-btn nav-bar-btn">
+                <button
+                  type="button"
+                  className="cursor-pointer w-24 text-[#8f49ff] border border-[#8f49ff] rounded-2xl p-2 pl-3 pr-3 hover:bg-[#993df5] hover:text-white hover:border-[#993df5] transition-colors duration-300"
+                >
                   Signup
                 </button>
               </NavLink>

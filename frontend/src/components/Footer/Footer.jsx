@@ -1,28 +1,45 @@
 import { FaInstagram } from "react-icons/fa";
 import { AiOutlineYoutube } from "react-icons/ai";
 import { BsTwitterX } from "react-icons/bs";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="footer width-100">
-      <div className="footer-container flex-column justify-center align-center">
-        <div>
-          <h2>FYNL Wear</h2>
+    <footer className="bg-gradient-to-r from-[#a178fa] to-[#5e34fa]">
+      <div className="flex flex-row p-10">
+        <div className="w-[40%]">
+          <img src="src\assets\Logo White.png" alt="logo" className="w-50" />
+          <p className="text-white ml-3 mt-1">
+            FYNL offers a curated collection of T-shirts for men, blending
+            modern style with timeless comfort. Each piece is designed to help
+            you make a personal statement without compromising on quality. Find
+            your perfect fit and express your individuality through our unique
+            designs.
+          </p>
         </div>
-        <div className="social-media-container flex-row justify-between align-center">
-          <div className="social-media-logo-container">
-            <FaInstagram />
+        <div className="flex flex-col text-3xl text-white items-center w-[60%]">
+          <h2 className="text-white text-2xl mb-7">Contact Us On</h2>
+          <div className="flex flex-row gap-8">
+            <div className="cursor-pointer hover:text-[#333] transition-colors duration-300">
+              <FaInstagram />
+            </div>
+            <div className="cursor-pointer hover:text-[#333] transition-colors duration-300">
+              <AiOutlineYoutube />
+            </div>
+            <div className="cursor-pointer hover:text-[#333] transition-colors duration-300">
+              <BsTwitterX />
+            </div>
           </div>
-          <div className="social-media-logo-container">
-            <AiOutlineYoutube />
-          </div>
-          <div className="social-media-logo-container">
-            <BsTwitterX />
+          <div className="mt-auto text-white flex flex-row gap-7 text-[16px]">
+            <NavLink to="/privacy-policy">Privacy Policy</NavLink>
+            <NavLink to="/terms-and-conditions">Terms & Conditions</NavLink>
+            <NavLink to="/refund-policy">Refund Policy</NavLink>
+            <NavLink to="/shipping-policy">Shipping Policy</NavLink>
           </div>
         </div>
-        <div className="copy-rigth-sec">
-          &copy; {new Date().getFullYear()} FYNL Wear. All rights reserved.
-        </div>
+      </div>
+      <div className="w-full text-white text-center p-2">
+        &copy; {new Date().getFullYear()} FYNL Wear. All rights reserved.
       </div>
     </footer>
   );
