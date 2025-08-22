@@ -2,7 +2,7 @@ import {
   fetchGetCartById,
   fetchDeleteCartItem,
   fetchUpdateQuantity,
-} from "../features/Cart/CartSlice";
+} from "../features/Cart/cartSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
