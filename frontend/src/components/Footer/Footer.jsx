@@ -6,8 +6,8 @@ import { NavLink } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-[#a178fa] to-[#5e34fa]">
-      <div className="flex flex-row p-10">
-        <div className="w-[40%]">
+      <div className="flex  flex-col justify-center items-center w-full lg:flex-row lg:justify-between p-10">
+        <div className="text-center flex flex-col items-center w-full lg:w-[40%]">
           <img src="src\assets\Logo White.png" alt="logo" className="w-50" />
           <p className="text-white ml-3 mt-1">
             FYNL offers a curated collection of T-shirts for men, blending
@@ -17,7 +17,7 @@ const Footer = () => {
             designs.
           </p>
         </div>
-        <div className="flex flex-col text-3xl text-white items-center w-[60%]">
+        <div className="flex flex-col text-3xl text-white items-center w-full lg:w-[60%] mt-2.5">
           <h2 className="text-white text-2xl mb-7">Contact Us On</h2>
           <div className="flex flex-row gap-8">
             <div className="cursor-pointer hover:text-[#333] transition-colors duration-300">
@@ -30,7 +30,7 @@ const Footer = () => {
               <BsTwitterX />
             </div>
           </div>
-          <div className="mt-auto text-white flex flex-row gap-7 text-[16px]">
+          <div className="mt-8 text-white flex flex-col gap-5 md:flex-row md:gap-10 justify-center items-center lg:gap-5 text-[16px]">
             <NavLink to="/privacy-policy">Privacy Policy</NavLink>
             <NavLink to="/terms-and-conditions">Terms & Conditions</NavLink>
             <NavLink to="/refund-policy">Refund Policy</NavLink>

@@ -20,7 +20,7 @@ const Home = () => {
     <div className="min-h-dvh max-h-full bg-gradient-to-r from-[#f4edff] to-[#d6c8f4]">
       <div>
         <div className="bg-[url('https://res.cloudinary.com/dhavsxxnd/image/upload/v1755842918/2149448742_qwr0vg.jpg')] bg-cover w-full h-[90vh] flex flex-row items-center justify-end-safe">
-          <div className="w-[50%]">
+          <div className="w-[100%] md:w-[50%] text-center md:text-left p-2 md:p-0">
             <h1 className="text-4xl font-bold mb-4 font-[Edu_NSW_ACT_Cursive]">
               Welcome to FYNL Mens Wear
             </h1>
@@ -32,9 +32,11 @@ const Home = () => {
         </div>
         <div className="mt-12 p-10">
           <div className="flex flex-row justify-between items-center mb-6">
-            <h2 className="text-3xl text-[#333] font-bold">Latest Products</h2>
+            <h2 className="text-[18px] md:text-3xl text-[#333] font-bold">
+              Latest Products
+            </h2>
             <NavLink to="/product?page=1">
-              <p className="relative top-0 text-1xl cursor-pointer flex flex-row items-center gap-2 text-[#993df5]">
+              <p className="relative top-0 text-1xl cursor-pointer flex flex-row items-center gap-1 text-[#993df5]">
                 View All
                 <span>
                   <MdKeyboardDoubleArrowRight />
@@ -52,12 +54,17 @@ const Home = () => {
             )}
           </div>
         </div>
-        <div className="mt-12 p-10">
-          <h2 className="text-3xl text-[#333] font-bold">Categories</h2>
-          <div className="mt-12 flex flex-row gap-6 overflow-x-auto">
+        <div className="mt-12 p-10 flex flex-col justify-center items-center">
+          <h2 className="text-[18px] md:text-3xl text-[#333] font-bold">
+            Categories
+          </h2>
+          <div className="mt-12 flex flex-col justify-center items-center md:flex-row gap-6 flex-wrap">
             {categoriesConstants.map((category) => (
               <NavLink to={`/product?category=${category.value}&page=1`}>
-                <div key={category.id} className="rounded-2xl">
+                <div
+                  key={category.id}
+                  className="rounded-2xl flex flex-col justify-center items-center w-[200px] lg:w-[180px] hover:text-[#993df5] cursor-pointer"
+                >
                   <div className="rounded-2xl overflow-hidden">
                     <img
                       src={category.imageUrl}

@@ -13,6 +13,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const isAuthorised = useSelector((state) => state.auth.isAuthenticated);
   const [openCategories, setOpenCategories] = useState(false);
+  const [openNavItems, setOpenNavItems] = useState(false);
   const closePopup = () => {
     setOpenCategories(false);
   };
@@ -33,13 +34,16 @@ const Navbar = () => {
               <img
                 src="src\assets\Logo Black.png"
                 alt="logo"
-                className="w-40"
+                className="w-40 hidden lg:block"
               />
             </NavLink>
           </div>
-          <div className="flex flex-row">
-            <VscMenu className="block lg:hidden" />
-            <div className="hidden lg:flex flex-row gap-8">
+          <div className="flex flex-row w-full lg:w-auto justify-between">
+            <VscMenu
+              className="block md:hidden"
+              onClick={() => setOpenNavItems((prev) => !prev)}
+            />
+            <div className="hidden md:flex flex-row gap-8">
               <NavLink
                 to="/"
                 className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
@@ -78,7 +82,7 @@ const Navbar = () => {
                   className="cursor-pointer text-[18px] p-2 hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
                 >
                   <FiShoppingCart />
-                  <span className="text-[16px]">Cart</span>
+                  <span className="text-[16px] hidden lg:block">Cart</span>
                 </button>
               </NavLink>
 
@@ -87,7 +91,7 @@ const Navbar = () => {
                 className="cursor-pointer text-[18px] p-2  hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
               >
                 <FiUser />
-                <span className="text-[16px]">Account</span>
+                <span className="text-[16px] hidden lg:block">Account</span>
               </button>
 
               <div>
@@ -97,7 +101,7 @@ const Navbar = () => {
                   className="cursor-pointer text-[18px] p-2   hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
                 >
                   <IoMdLogOut />
-                  <span className="text-[16px]">Logout</span>
+                  <span className="text-[16px] hidden lg:block">Logout</span>
                 </button>
               </div>
             </div>
@@ -123,6 +127,26 @@ const Navbar = () => {
           )}
         </div>
       </nav>
+      {openNavItems && (
+        <div className="absolute top-[10%] flex flex-row justify-center items-center w-full h-[80%] bg-white">
+          <div className=" w-[80%] bg-[#993df5] p-5 text-white rounded-2xl text-center">
+            <ul className="flex flex-col divide-y divide-white p-4">
+              <li className="p-4">
+                <NavLink to="/">Home</NavLink>
+              </li>
+              <li className="p-4">
+                <NavLink to="/category">Category</NavLink>
+              </li>
+              <li className="p-4">
+                <NavLink to="/my-orders">Orders</NavLink>
+              </li>
+              <li className="p-4">
+                <NavLink to="/contact">Contact</NavLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
       {openCategories && <CategoryList onClose={closePopup} />}
     </>
   );
