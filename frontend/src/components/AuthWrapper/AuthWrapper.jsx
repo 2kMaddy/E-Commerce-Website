@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "../../features/Auth/authSlice";
+import "../../styles/main.css";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();

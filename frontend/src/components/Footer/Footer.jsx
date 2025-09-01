@@ -7,8 +7,12 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-[#a178fa] to-[#5e34fa]">
       <div className="flex  flex-col justify-center items-center w-full lg:flex-row lg:justify-between p-10">
-        <div className="text-center flex flex-col items-center w-full lg:w-[40%]">
-          <img src="src\assets\Logo White.png" alt="logo" className="w-50" />
+        <div className="text-center lg:text-left flex flex-col items-center lg:items-start w-full lg:w-[40%]">
+          <img
+            src="https://res.cloudinary.com/dhavsxxnd/image/upload/v1755936903/Logo_White_gd2ygh.png"
+            alt="logo"
+            className="w-50"
+          />
           <p className="text-white ml-3 mt-1">
             FYNL offers a curated collection of T-shirts for men, blending
             modern style with timeless comfort. Each piece is designed to help

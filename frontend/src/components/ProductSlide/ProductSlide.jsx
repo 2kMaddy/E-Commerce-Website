@@ -21,7 +21,7 @@ const ProductSlide = ({ products }) => {
     <div className="relative">
       <button
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
+        className="hidden md:flex absolute left-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
       >
         <FaCircleChevronLeft />
       </button>
@@ -33,7 +33,7 @@ const ProductSlide = ({ products }) => {
             ref={scrollRef}
           >
             {products.map((product) => (
-              <li key={product._id}>
+              <li key={product._id} className="w-[230px] lg:w-[300px]">
                 <ProductCard productDetail={product} />
               </li>
             ))}
@@ -44,7 +44,7 @@ const ProductSlide = ({ products }) => {
       </div>
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
+        className="hidden md:flex absolute right-0 top-1/2 z-20 transform -translate-y-1/2 text-4xl text-white rounded-full p-2 cursor-pointer"
       >
         <FaCircleChevronRight />
       </button>

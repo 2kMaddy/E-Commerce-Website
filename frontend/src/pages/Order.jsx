@@ -62,8 +62,8 @@ const Order = () => {
   };
 
   return (
-    <div className="page-container">
-      <div className="page-content">
+    <div>
+      <div>
         <h2>Order</h2>
         <div>
           <ul>
@@ -72,7 +72,7 @@ const Order = () => {
                 <li key={each._id || index}>
                   <div>
                     <h3>{each.productName}</h3>
-                    <img src={each.thumbnailUrl} className="cart-thumbnail" />
+                    <img src={each.thumbnailUrl} />
                     <p>{`Size: ${each.size}`}</p>
                     <p>{`Quantity: ${each.quantity}`}</p>
                     <p>{`Item total: ${each.itemTotal}`}</p>

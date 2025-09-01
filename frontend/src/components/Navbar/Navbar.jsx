@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { VscMenu } from "react-icons/vsc";
 import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import Cookies from "js-cookie";
-import CategoryList from "../CategoryList/CategoryList";
 import { logout } from "../../features/Auth/authSlice";
+import { fetchGetCartById } from "../../features/Cart/CartSlice";
+import { CategoryList, NavList } from "../Popup/Popup";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [noOfItemsInCart, setNoOfItemsInCart] = useState(0);
+
+  const user = useSelector((state) => state.auth.user);
   const isAuthorised = useSelector((state) => state.auth.isAuthenticated);
-  const [openCategories, setOpenCategories] = useState(false);
-  const [openNavItems, setOpenNavItems] = useState(false);
-  const closePopup = () => {
-    setOpenCategories(false);
-  };
+  const cartItemsList = useSelector((state) => state.cart.existingCartList);
+  const cartLength = useSelector((state) => state.cart.noOfItems);
+
+  useEffect(() => {
+    if (isAuthorised) {
+      dispatch(fetchGetCartById(user._id));
+      setNoOfItemsInCart(cartLength);
+    }
+  }, [cartLength, dispatch, isAuthorised, user]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -32,17 +40,16 @@ const Navbar = () => {
           <div>
             <NavLink to="/">
               <img
-                src="src\assets\Logo Black.png"
+                src="https://res.cloudinary.com/dhavsxxnd/image/upload/v1755936903/Logo_Black-removebg-preview_dbskal.png"
                 alt="logo"
                 className="w-40 hidden lg:block"
               />
             </NavLink>
           </div>
           <div className="flex flex-row w-full lg:w-auto justify-between">
-            <VscMenu
-              className="block md:hidden"
-              onClick={() => setOpenNavItems((prev) => !prev)}
-            />
+            <div className="block md:hidden">
+              <NavList />
+            </div>
             <div className="hidden md:flex flex-row gap-8">
               <NavLink
                 to="/"
@@ -50,14 +57,14 @@ const Navbar = () => {
               >
                 Home
               </NavLink>
+              <NavLink
+                to="/product?page=1"
+                className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
+              >
+                Products
+              </NavLink>
               <div>
-                <button
-                  type="button"
-                  onClick={() => setOpenCategories((prev) => !prev)}
-                  className="cursor-pointer relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]"
-                >
-                  Category
-                </button>
+                <CategoryList  />
               </div>
               <NavLink
                 to="/my-orders"
@@ -81,7 +88,14 @@ const Navbar = () => {
                   type="button"
                   className="cursor-pointer text-[18px] p-2 hover:text-[#993df5]  transition-colors duration-300 flex items-center gap-2"
                 >
-                  <FiShoppingCart />
+                  <div className="relative">
+                    <FiShoppingCart />
+                    {cartItemsList.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                        {noOfItemsInCart}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[16px] hidden lg:block">Cart</span>
                 </button>
               </NavLink>
@@ -127,27 +141,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-      {openNavItems && (
-        <div className="absolute top-[10%] flex flex-row justify-center items-center w-full h-[80%] bg-white">
-          <div className=" w-[80%] bg-[#993df5] p-5 text-white rounded-2xl text-center">
-            <ul className="flex flex-col divide-y divide-white p-4">
-              <li className="p-4">
-                <NavLink to="/">Home</NavLink>
-              </li>
-              <li className="p-4">
-                <NavLink to="/category">Category</NavLink>
-              </li>
-              <li className="p-4">
-                <NavLink to="/my-orders">Orders</NavLink>
-              </li>
-              <li className="p-4">
-                <NavLink to="/contact">Contact</NavLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
-      {openCategories && <CategoryList onClose={closePopup} />}
     </>
   );
 };

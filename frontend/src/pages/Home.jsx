@@ -30,7 +30,7 @@ const Home = () => {
             </p>
           </div>
         </div>
-        <div className="mt-12 p-10">
+        <div className="mt-12 p-5 lg:p-10">
           <div className="flex flex-row justify-between items-center mb-6">
             <h2 className="text-[18px] md:text-3xl text-[#333] font-bold">
               Latest Products

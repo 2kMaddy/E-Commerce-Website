@@ -67,7 +67,7 @@ const AuthForm = (props) => {
           className="flex flex-col justify-center items-center gap-2 w-full"
         >
           <img
-            src="src\assets\Logo_Black-removebg-preview.png"
+            src="https://res.cloudinary.com/dhavsxxnd/image/upload/v1755936903/Logo_Black-removebg-preview_dbskal.png"
             alt="logo"
             className="w-[250px]"
           />

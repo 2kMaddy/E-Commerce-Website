@@ -25,7 +25,6 @@ export const fetchGetCartById = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await getCartById(userId);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -40,7 +39,6 @@ export const fetchDeleteCartItem = createAsyncThunk(
   async (cartId, { rejectWithValue }) => {
     try {
       const response = await deleteCartItemById(cartId);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -55,7 +53,6 @@ export const fetchUpdateQuantity = createAsyncThunk(
   async ({ cartId, quantity }, { rejectWithValue }) => {
     try {
       const response = await updateCartItemQuantity(cartId, quantity);
-      console.log(response);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -73,6 +70,7 @@ const initialState = {
   totalPrice: null,
   loading: false,
   error: null,
+  noOfItems: 0,
 };
 
 const cartSlice = createSlice({
@@ -96,10 +94,12 @@ const cartSlice = createSlice({
     setSize(state, action) {
       state.size = action.payload;
     },
+    setNoOfItems(state, action) {
+      state.noOfItems = action.payload;
+    },
   },
   extraReducers: (builder) => {
     const commonPending = (state) => {
-      state.existingCartList = [];
       state.loading = true;
       state.error = null;
     };
@@ -122,6 +122,7 @@ const cartSlice = createSlice({
       .addCase(fetchGetCartById.fulfilled, (state, action) => {
         state.existingCartList = action.payload.data;
         state.loading = false;
+        state.noOfItems = action.payload.data.length;
       })
       .addCase(fetchGetCartById.rejected, commonRejected)
 
@@ -131,7 +132,7 @@ const cartSlice = createSlice({
       })
       .addCase(fetchDeleteCartItem.rejected, commonRejected)
 
-      .addCase(fetchUpdateQuantity.pending, commonPending)
+      // .addCase(fetchUpdateQuantity.pending, commonPending)
       .addCase(fetchUpdateQuantity.fulfilled, (state) => {
         state.loading = false;
       })
@@ -139,6 +140,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const { setProductId, incQuantity, decQuantity, setSize } =
+export const { setProductId, incQuantity, decQuantity, setSize, setNoOfItems } =
   cartSlice.actions;
 export default cartSlice.reducer;

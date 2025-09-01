@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, NavLink } from "react-router-dom";
 import { fetchCancelOrder, fetchOrderList } from "../features/Order/orderSlice";
 import { useEffect } from "react";
+import priceFormat from "../utlis/priceFormat";
 
 const MyOrders = () => {
   const dispatch = useDispatch();
@@ -26,45 +27,82 @@ const MyOrders = () => {
     }
   };
 
+  const statusColors = {
+    Pending: "text-yellow-600",
+    Confirmed: "text-green-500",
+    Shipped: "text-green-500",
+    Delivered: "text-blue-700",
+    Cancelled: "text-red-700",
+    Returned: "text-red-700",
+    Failed: "text-red-700",
+    Refunded: "text-green-700",
+  };
+
   return (
-    <div>
-      <h1>My Orders</h1>
+    <div className="flex flex-col p-5 min-h-dvh">
+      <h1 className="text-[#333] text-2xl font-bold">My Orders</h1>
       <p>Your orders will be displayed here.</p>
       {/* Render order list here */}
-      <ul>
+      <ul className="flex flex-col w-full gap-4 text-[14px] mt-5">
         {Array.isArray(orderList) && orderList.length > 0 ? (
           orderList.map((order) => (
-            <li key={order._id}>
-              <h2>Order Id: {order._id}</h2>
-              <p>
-                Order Date: {new Date(order.createdAt).toLocaleDateString()}
-              </p>
-              {Array.isArray(order.orderItems) &&
-              order.orderItems.length > 0 ? (
-                <ul>
-                  {order.orderItems.map((item) => (
-                    <li key={item._id}>
-                      <img src={item.thumbnailUrl} alt={item.productName} />
-                      <p>Product: {item.productName}</p>
-                      <p>Quantity: {item.quantity}</p>
-                      <p>Price: ₹{item.price}</p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No items in this order.</p>
-              )}
+            <li
+              key={order._id}
+              className="border border-gray-300 rounded-md p-2 md:p-4 gap-4 flex flex-col md:flex-row justify-between items-start md:items-end"
+            >
               <div>
-                <p>Order Status: {order.orderStatus}</p>
-                <p>Grand Total: ₹{order.grandTotal}</p>
+                <p>
+                  <span className="font-semibold">Ordered Date:</span>{" "}
+                  {new Date(order.createdAt).toLocaleDateString("en-in", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
+                {Array.isArray(order.orderItems) &&
+                order.orderItems.length > 0 ? (
+                  <ul className="flex flex-col gap-2 mt-2">
+                    {order.orderItems.map((item) => (
+                      <li
+                        key={item._id}
+                        className="flex flex-row gap-4 text-[#333]"
+                      >
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.productName}
+                          className="w-[80px] h-[80px]"
+                        />
+                        <div>
+                          <p>Product: {item.productName}</p>
+                          <p>Quantity: {item.quantity}</p>
+                          <p>Price: ₹{item.price}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No items in this order.</p>
+                )}
               </div>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => handleCancelOrder(order._id)}
-                >
-                  Cancel Order
-                </button>
+              <div className="self-end flex flex-col">
+                <p className="font-semibold text-[#333]">
+                  Order Status:{" "}
+                  <span className={statusColors[order.orderStatus] || ""}>
+                    {order.orderStatus}
+                  </span>
+                </p>
+                <p className="font-semibold text-[#333]">
+                  Grand Total: {priceFormat(Number(order.grandTotal))}
+                </p>
+                <div className="self-end">
+                  <button
+                    type="button"
+                    onClick={() => handleCancelOrder(order._id)}
+                    className="cursor-pointer mt-2 text-[12px] text-[#8f49ff] border border-[#8f49ff] rounded-2xl p-2 hover:bg-[#993df5] hover:text-white hover:border-[#993df5] transition-colors duration-300"
+                  >
+                    Cancel Order
+                  </button>
+                </div>
               </div>
             </li>
           ))

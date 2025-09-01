@@ -71,9 +71,13 @@ const orderSlice = createSlice({
     setClearList(state) {
       state.selectedItems = [];
     },
+    setExistingCartList(state, action) {
+      state.selectedItems = action.payload;
+    },
   },
   extraReducers: (builder) => {
     const commonPending = (state) => {
+      state.selectedItems = [];
       state.loading = true;
       state.error = null;
     };
@@ -105,6 +109,10 @@ const orderSlice = createSlice({
   },
 });
 
-export const { setSelectedItems, setNewList, setClearList } =
-  orderSlice.actions;
+export const {
+  setSelectedItems,
+  setNewList,
+  setClearList,
+  setExistingCartList,
+} = orderSlice.actions;
 export default orderSlice.reducer;

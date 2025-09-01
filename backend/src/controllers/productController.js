@@ -59,7 +59,7 @@ export const getAllProducts = async (req, res) => {
 
     // Parse pagination parameters
     const pageNumber = parseInt(page) || 1;
-    const limitNumber = parseInt(limit) || 10;
+    const limitNumber = parseInt(limit) || 12;
 
     const skip = (pageNumber - 1) * limitNumber;
 
@@ -221,7 +221,6 @@ export const addReview = async (req, res) => {
       product.reviews.reduce((acc, review) => acc + review.rating, 0) /
         product.reviews.length
     );
-
 
     await product.save();
 
