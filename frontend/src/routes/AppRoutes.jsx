@@ -21,6 +21,7 @@ const AppRoutes = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "product", element: <ProductList /> },
       { path: "product/:productId", element: <ProductDetail /> },
+      { path: "product-by-category/:category", element: <ProductList /> },
       {
         path: "order",
         element: (

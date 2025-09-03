@@ -6,9 +6,7 @@ export const getAllProducts = (page) =>
 export const getLatestProduct = () => api.get("/product/get-latest-product");
 
 export const getProductsByCategory = (page, category) =>
-  api.get(
-    `/product/get-product-by-category?page=${page}&limit=12&category=${category}`
-  );
+  api.get(`/product/get-product-by-category/${category}?page=${page}&limit=12`);
 
 export const getProductById = (productId) =>
   api.get(`/product/get-product-by-id/${productId}`);

@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, NavLink, useNavigate } from "react-router-dom";
+import {
+  useSearchParams,
+  NavLink,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
 
@@ -13,7 +18,7 @@ import Beat from "../components/Loader/Beat";
 const ProductList = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const category = searchParams.get("category");
+  const { category } = useParams();
   const currentPage = parseInt(searchParams.get("page"));
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);

@@ -403,7 +403,7 @@ export const getLatestProduct = async (req, res) => {
 
 export const getProductsByFilters = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category } = req.params;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 

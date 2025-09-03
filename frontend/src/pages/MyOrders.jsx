@@ -75,7 +75,7 @@ const MyOrders = () => {
                         <div>
                           <p>Product: {item.productName}</p>
                           <p>Quantity: {item.quantity}</p>
-                          <p>Price: ₹{item.price}</p>
+                          <p>Price: {priceFormat(item.price)}</p>
                         </div>
                       </li>
                     ))}

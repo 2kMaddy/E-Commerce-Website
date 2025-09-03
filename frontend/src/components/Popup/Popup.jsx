@@ -9,7 +9,7 @@ const CategoryListItems = () => {
       {categoriesConstants.map((category) => (
         <li key={category.id} className="text-[14px]">
           <NavLink
-            to={`/product?page=1&category=${category.value}`}
+            to={`/product-by-category/${category.value}?page=1`}
             className="hover:text-purple-600 hover:font-semibold"
           >
             {category.categoryName}
@@ -23,7 +23,7 @@ const CategoryListItems = () => {
 export const CategoryList = () => {
   return (
     <el-dropdown className="inline-block">
-      <button className="relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]">
+      <button className="cursor-pointer relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]">
         Category
       </button>
 

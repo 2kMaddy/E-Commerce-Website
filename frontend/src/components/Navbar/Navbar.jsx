@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { VscMenu } from "react-icons/vsc";
 import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import Cookies from "js-cookie";
 import { logout } from "../../features/Auth/authSlice";
-import { fetchGetCartById } from "../../features/Cart/CartSlice";
+import { fetchGetCartById } from "../../features/Cart/cartSlice";
 import { CategoryList, NavList } from "../Popup/Popup";
 
 const Navbar = () => {
@@ -64,7 +63,7 @@ const Navbar = () => {
                 Products
               </NavLink>
               <div>
-                <CategoryList  />
+                <CategoryList />
               </div>
               <NavLink
                 to="/my-orders"

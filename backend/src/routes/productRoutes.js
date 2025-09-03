@@ -32,6 +32,6 @@ productRoutes.delete(
   verifyToken,
   deleteMultiProducts
 );
-productRoutes.get("/get-product-by-category", getProductsByFilters);
+productRoutes.get("/get-product-by-category/:category", getProductsByFilters);
 
 export default productRoutes;
