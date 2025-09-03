@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: "https://e-commerce-website-i82x.onrender.com/api",
   headers: {
     "Content-type": "application/json",
   },
