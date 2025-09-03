@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "../../features/Auth/authSlice";
 import "../../styles/main.css";
+import Beat from "../Loader/Beat";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,11 @@ const AuthWrapper = ({ children }) => {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Beat />
+      </div>
+    );
   }
 
   return children;

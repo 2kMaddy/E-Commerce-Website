@@ -18,50 +18,52 @@ import SortBy from "../components/SortBy/sortBy";
 
 const ProductList = () => {
   const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
+
   const { category } = useParams();
+
   const currentPage = parseInt(searchParams.get("page"));
+  const searchQuery = searchParams.get("search");
+
   const dispatch = useDispatch();
+
   const products = useSelector((state) => state.products.products);
   const loading = useSelector((state) => state.products.loading);
   const totalPage = useSelector((state) => state.products.totalPage);
-  const [searchKeyWord, setSearchKeyWord] = useState("");
-  const [sortInput, setSortInput] = useState("");
 
-  let filteredProducts = products;
-  if (searchKeyWord?.trim()) {
-    const key = searchKeyWord.trim().toLowerCase();
-    filteredProducts = products.filter((product) =>
-      product.productName?.trim().toLowerCase().includes(key)
-    );
-  }
+  const [searchKeyWord, setSearchKeyWord] = useState(searchQuery || "");
+  const [sortInput, setSortInput] = useState("");
 
   const handleChangeSorty = (value) => {
     setSortInput(value);
   };
 
-  if (sortInput === "lowToHigh") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
-  } else if (sortInput === "highToLow") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
-  } else if (sortInput === "latest") {
-    filteredProducts = [...filteredProducts].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-  } else if (sortInput === "oldest") {
-    filteredProducts = [...filteredProducts].sort(
-      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-    );
-  }
-
   useEffect(() => {
+    handleFetchProducts();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [dispatch, currentPage, category, sortInput]);
+
+  const handleFetchProducts = () => {
     if (!category) {
-      dispatch(fetchProducts(currentPage));
+      dispatch(
+        fetchProducts({
+          page: currentPage,
+          sortBy: sortInput,
+          searchQuery: searchKeyWord,
+        })
+      );
     } else {
       dispatch(fetchProductsByCategory({ page: currentPage, category }));
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [dispatch, currentPage, category]);
+  };
+
+  const submitSearchKey = (e) => {
+    if (e.key === "Enter") {
+      handleFetchProducts();
+      navigate(`/product?search=${searchKeyWord}&page=1`);
+    }
+  };
 
   const paginationBtn = () => {
     const values = [];
@@ -73,7 +75,7 @@ const ProductList = () => {
       <>
         {values.length > 0 &&
           values.map((each) => (
-            <NavLink to={`/product?page=${each}`}>
+            <NavLink to={`/product?page=${each}`} key={each}>
               <button
                 type="button"
                 className={`cursor-pointer border border-[#8f49ff] rounded-md pr-4 pl-4 p-2 hover:bg-[#8f49ff] hover:text-white font-mono ${
@@ -111,11 +113,12 @@ const ProductList = () => {
             <div className="flex flex-row items-center gap-4 border border-gray-300 rounded-md p-2">
               <FaSearch />
               <input
-                type="text"
+                type="search"
                 placeholder="Search..."
                 className="border-none outline-none w-full"
-                value={searchKeyWord}
+                value={searchKeyWord || ""}
                 onChange={(e) => setSearchKeyWord(e.target.value)}
+                onKeyDown={submitSearchKey}
               />
             </div>
             <div>
@@ -131,7 +134,7 @@ const ProductList = () => {
             <div className="h-dvh w-full flex justify-center items-center">
               <Beat />
             </div>
-          ) : filteredProducts.length === 0 && !loading ? (
+          ) : products.length === 0 && !loading ? (
             <div className="flex justify-center items-center h-[50vh]">
               <h3 className="text-xl font-semibold text-[#333]">
                 No products found
@@ -139,7 +142,7 @@ const ProductList = () => {
             </div>
           ) : (
             <ul className="grid grid-cols-1 place-items-center md:grid-cols-3 xl:grid-cols-4 gap-5 mt-10">
-              {filteredProducts.map((each) => (
+              {products.map((each) => (
                 <li key={each._id} className="w-[230px] lg:w-[300px]">
                   <ProductCard productDetail={each} />
                 </li>

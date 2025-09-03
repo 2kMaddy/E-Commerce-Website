@@ -1,7 +1,9 @@
 import api from "./api";
 
-export const getAllProducts = (page) =>
-  api.get(`/product/get-product?page=${page}`);
+export const getAllProducts = (page, sortBy, searchQuery) =>
+  api.get(
+    `/product/get-product?page=${page}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+  );
 
 export const getLatestProduct = () => api.get("/product/get-latest-product");
 

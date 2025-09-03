@@ -24,10 +24,9 @@ export const fetchLatestProducts = createAsyncThunk(
 
 export const fetchProducts = createAsyncThunk(
   "products/getProducts",
-  async (page, { rejectWithValue }) => {
+  async ({ page, sortBy, searchQuery }, { rejectWithValue }) => {
     try {
-      console.log(page);
-      const response = await getAllProducts(page);
+      const response = await getAllProducts(page, sortBy, searchQuery);
       console.log(response);
       return response.data;
     } catch (error) {

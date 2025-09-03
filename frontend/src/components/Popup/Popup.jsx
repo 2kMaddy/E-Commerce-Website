@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { VscMenu } from "react-icons/vsc";
-import categoriesConstants from "../../utlis/constants";
+import { categoriesConstants } from "../../utlis/constants";
 
 const CategoryListItems = () => {
   return (
@@ -26,7 +26,6 @@ export const CategoryList = () => {
       <button className="cursor-pointer relative inline-block text-black after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#993df5] after:transition-transform after:duration-300 after:origin-left after:scale-x-0 hover:after:scale-x-80 hover:text-[#993df5]">
         Category
       </button>
-
       <el-menu
         anchor="bottom center"
         popover

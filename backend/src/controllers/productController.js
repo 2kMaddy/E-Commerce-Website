@@ -45,10 +45,10 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const { page, limit } = req.query;
+    const { page, sortBy, searchQuery } = req.query;
 
     // If pagination is not requested, return all products
-    if (!page && !limit) {
+    if (!page) {
       const products = await Product.find().sort({ createdAt: -1 });
       return res.status(200).json({
         success: true,
@@ -59,17 +59,37 @@ export const getAllProducts = async (req, res) => {
 
     // Parse pagination parameters
     const pageNumber = parseInt(page) || 1;
-    const limitNumber = parseInt(limit) || 12;
-
+    const limitNumber = 12;
     const skip = (pageNumber - 1) * limitNumber;
 
+    // sort query
+    const [field, order] = sortBy.split(":");
+    let sortByQuery;
+    if (field) {
+      sortByQuery = { [field]: order === "asc" ? 1 : -1 };
+    } else {
+      sortByQuery = { createdAt: -1 };
+    }
+
+    let query = {};
+    if (searchQuery) {
+      const words = searchQuery.trim().split(/\s+/);
+      query.$and = words.map((word) => ({
+        $or: [
+          { productName: { $regex: word, $options: "i" } },
+          { description: { $regex: word, $options: "i" } },
+          { category: { $regex: word, $options: "i" } },
+        ],
+      }));
+    }
+
     // Fetch paginated results
-    const products = await Product.find()
-      .sort({ createdAt: -1 })
+    const products = await Product.find(query)
+      .sort(sortByQuery)
       .skip(skip)
       .limit(limitNumber);
 
-    const total = await Product.countDocuments();
+    const total = await Product.countDocuments(query);
 
     return res.status(200).json({
       success: true,
