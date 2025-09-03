@@ -5,7 +5,7 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import Beat from "../components/Loader/Beat";
 import { fetchLatestProducts } from "../features/Products/productSlice";
 import ProductSlide from "../components/ProductSlide/ProductSlide";
-import categoriesConstants from "../utlis/constants";
+import { categoriesConstants } from "../utlis/constants";
 
 const Home = () => {
   const productList = useSelector((state) => state.products.products);
@@ -60,7 +60,7 @@ const Home = () => {
           </h2>
           <div className="mt-12 flex flex-col justify-center items-center md:flex-row gap-6 flex-wrap">
             {categoriesConstants.map((category) => (
-              <NavLink to={`/product?category=${category.value}&page=1`}>
+              <NavLink to={`/product-by-category/${category.value}?page=1`}>
                 <div
                   key={category.id}
                   className="rounded-2xl flex flex-col justify-center items-center w-[200px] lg:w-[180px] hover:text-[#993df5] cursor-pointer"

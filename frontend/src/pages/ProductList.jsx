@@ -7,13 +7,14 @@ import {
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
-
 import {
   fetchProducts,
   fetchProductsByCategory,
 } from "../features/Products/productSlice";
 import ProductCard from "../components/ProductCard/ProductCard";
 import Beat from "../components/Loader/Beat";
+import { sortConstants } from "../utlis/constants";
+import SortBy from "../components/SortBy/sortBy";
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -34,6 +35,10 @@ const ProductList = () => {
       product.productName?.trim().toLowerCase().includes(key)
     );
   }
+
+  const handleChangeSorty = (value) => {
+    setSortInput(value);
+  };
 
   if (sortInput === "lowToHigh") {
     filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
@@ -114,16 +119,10 @@ const ProductList = () => {
               />
             </div>
             <div>
-              <select
-                onChange={(e) => setSortInput(e.target.value)}
-                className="border border-gray-300 rounded-md p-2"
-              >
-                <option value="">Sort by </option>
-                <option value="lowToHigh">Price: Low to High</option>
-                <option value="highToLow">Price: High to Low</option>
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
-              </select>
+              <SortBy
+                sortByData={sortConstants}
+                onChangeFunction={handleChangeSorty}
+              />
             </div>
           </div>
         </div>

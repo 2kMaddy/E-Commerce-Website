@@ -1,4 +1,4 @@
-const categoriesConstants = [
+export const categoriesConstants = [
   {
     imageUrl:
       "https://img.freepik.com/free-vector/simple-monocolor-home-run-hero-baseball-t-shirt_742173-8050.jpg?t=st=1752390123~exp=1752393723~hmac=a817a6effa2bb12492b982e38ddb417b081697ceb1970e0aa36c29c0f1c24f4a&w=826",
@@ -43,4 +43,21 @@ const categoriesConstants = [
   },
 ];
 
-export default categoriesConstants;
+export const sortConstants = [
+  {
+    value: "price:asc",
+    displayText: "Price Low to High",
+  },
+  {
+    value: "price:desc",
+    displayText: "Price High to Low",
+  },
+  {
+    value: "createdAt:desc",
+    displayText: "Newest First",
+  },
+  {
+    value: "createdAt:asc",
+    displayText: "Oldest First",
+  },
+];
