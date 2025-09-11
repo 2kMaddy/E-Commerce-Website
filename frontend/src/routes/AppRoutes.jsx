@@ -12,6 +12,11 @@ import MyOrders from "../pages/MyOrders";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserLayout from "../layout/UserLayout";
 import "../styles/main.css";
+import Contact from "../pages/Contact";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import TermsandConditions from "../pages/TermsandConditions";
+import RefundPolicy from "../pages/RefundPolicy";
+import ShippingPolicy from "../pages/ShippingPolicy";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -22,6 +27,11 @@ const AppRoutes = createBrowserRouter([
       { path: "product", element: <ProductList /> },
       { path: "product/:productId", element: <ProductDetail /> },
       { path: "product-by-category/:category", element: <ProductList /> },
+      { path: "contact", element: <Contact /> },
+      { path: "privacy-policy", element: <PrivacyPolicy /> },
+      { path: "terms-and-conditions", element: <TermsandConditions /> },
+      { path: "refund-policy", element: <RefundPolicy /> },
+      { path: "shipping-policy", element: <ShippingPolicy /> },
       {
         path: "order",
         element: (

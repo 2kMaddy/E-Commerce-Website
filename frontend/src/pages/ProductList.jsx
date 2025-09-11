@@ -14,7 +14,7 @@ import {
 import ProductCard from "../components/ProductCard/ProductCard";
 import Beat from "../components/Loader/Beat";
 import { sortConstants } from "../utlis/constants";
-import SortBy from "../components/SortBy/sortBy";
+import SortBy from "../components/SortBy/SortBy";
 
 const ProductList = () => {
   const navigate = useNavigate();
